@@ -21,6 +21,8 @@ export interface CsTopic {
   refs: CsRef[];
   /** 보관함 개념노트 갭 분석용 매칭 키워드 (제목/태그/헤딩에서 검색) */
   keywords?: string[];
+  /** 공신력 있는 외부 레퍼런스 사이트 (MDN, 공식 문서 등) — 추천 시 링크로 노출 */
+  sites?: CsRef[];
 }
 
 export interface Mission {
@@ -87,6 +89,12 @@ const roomEscape: Mission = {
         "같은 (테마, 날짜, 시간)에 동시 예약이 들어오는 상황을 가정해 DB 유니크 제약 + 낙관적 락 중 어떤 걸 쓸지 한 단락으로 정리.",
       refs: [REPOS.backendInterview, REPOS.gyoogle],
       keywords: ["동시성", "락", "낙관적", "비관적", "concurrency", "중복 예약"],
+      sites: [
+        {
+          label: "Optimistic concurrency control (Wikipedia)",
+          url: "https://en.wikipedia.org/wiki/Optimistic_concurrency_control",
+        },
+      ],
     },
     {
       id: "transaction-acid",
@@ -97,6 +105,12 @@ const roomEscape: Mission = {
         "READ COMMITTED와 REPEATABLE READ에서 예약 조회→생성 사이에 일어날 수 있는 이상 현상 비교.",
       refs: [REPOS.backendInterview, REPOS.gyoogle],
       keywords: ["트랜잭션", "transaction", "ACID", "격리", "isolation", "Transactional"],
+      sites: [
+        {
+          label: "Isolation levels (Wikipedia)",
+          url: "https://en.wikipedia.org/wiki/Isolation_%28database_systems%29",
+        },
+      ],
     },
     {
       id: "http-methods-status",
@@ -107,6 +121,16 @@ const roomEscape: Mission = {
         "내 API에서 POST/PUT/DELETE의 멱등성 여부를 표로 정리하고, 201/204/409를 언제 쓸지 적기.",
       refs: [REPOS.gyoogle, REPOS.jaeyeop],
       keywords: ["HTTP", "멱등", "idempotent", "상태 코드", "메서드", "status code"],
+      sites: [
+        {
+          label: "HTTP 메서드 (MDN)",
+          url: "https://developer.mozilla.org/ko/docs/Web/HTTP/Methods",
+        },
+        {
+          label: "HTTP 상태 코드 (MDN)",
+          url: "https://developer.mozilla.org/ko/docs/Web/HTTP/Status",
+        },
+      ],
     },
     {
       id: "rest-api-design",
@@ -116,6 +140,9 @@ const roomEscape: Mission = {
       task: "내 컨트롤러의 URI를 자원 명사 기준으로 다시 점검(동사 들어간 곳 찾기).",
       refs: [REPOS.backendInterview, REPOS.weareSoft],
       keywords: ["REST", "RESTful", "API 설계", "URI", "자원", "resource"],
+      sites: [
+        { label: "REST API Tutorial", url: "https://restfulapi.net/" },
+      ],
     },
     {
       id: "auth-cookie-session-jwt",
@@ -125,6 +152,13 @@ const roomEscape: Mission = {
       task: "세션 기반과 JWT 기반 로그인의 서버 저장 상태 차이를 3줄로 비교.",
       refs: [REPOS.gyoogle, REPOS.backendInterview],
       keywords: ["인증", "권한", "쿠키", "세션", "JWT", "auth", "session", "cookie"],
+      sites: [
+        { label: "JWT Introduction", url: "https://jwt.io/introduction" },
+        {
+          label: "HTTP 쿠키 (MDN)",
+          url: "https://developer.mozilla.org/ko/docs/Web/HTTP/Cookies",
+        },
+      ],
     },
     {
       id: "layered-architecture",
@@ -134,6 +168,12 @@ const roomEscape: Mission = {
       task: "Service에 있어야 할 로직이 Controller에 남아있지 않은지 한 클래스 점검.",
       refs: [REPOS.backendInterview, REPOS.seogeurim],
       keywords: ["계층", "아키텍처", "layered", "Controller", "Service", "Repository", "관심사 분리"],
+      sites: [
+        {
+          label: "Multitier architecture (Wikipedia)",
+          url: "https://en.wikipedia.org/wiki/Multitier_architecture",
+        },
+      ],
     },
     {
       id: "db-index-normalization",
@@ -143,6 +183,9 @@ const roomEscape: Mission = {
       task: "예약 조회에서 가장 자주 쓰는 WHERE 조건에 맞는 복합 인덱스 후보 적기.",
       refs: [REPOS.gyoogle, REPOS.devSquad],
       keywords: ["인덱스", "index", "정규화", "normalization", "복합 인덱스"],
+      sites: [
+        { label: "Use The Index, Luke!", url: "https://use-the-index-luke.com/" },
+      ],
     },
   ],
 };

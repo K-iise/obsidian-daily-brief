@@ -38,12 +38,25 @@ export class ConceptSource implements BriefSource {
         text: `_아직 노트가 없는 주제 (${gap.uncovered.length}/${total})_`,
         priority: 0,
       });
-      gap.uncovered.forEach((t, i) => {
+      gap.uncovered.forEach((t) => {
+        // 같은 priority(1) + 삽입 순서 유지(stable sort)로 주제 바로 아래 링크가 붙는다.
         items.push({
           text: `[ ] ${t.title}`,
-          priority: 1 + i,
+          priority: 1,
           key: `concept:gap:${t.id}`,
         });
+        const refs = t.sites && t.sites.length ? t.sites : t.refs;
+        const links = refs
+          .slice(0, 2)
+          .map((r) => `[${r.label}](${r.url})`)
+          .join(" · ");
+        if (links) {
+          items.push({
+            text: `  ↳ 📎 ${links}`,
+            priority: 1,
+            key: `concept:gap:${t.id}:links`,
+          });
+        }
       });
     } else if (total > 0) {
       items.push({
