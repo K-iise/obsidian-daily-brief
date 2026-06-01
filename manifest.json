@@ -1,0 +1,10 @@
+{
+  "id": "daily-brief",
+  "name": "Daily Brief",
+  "version": "0.0.1",
+  "minAppVersion": "1.4.0",
+  "description": "GitHub, 내 학습 노트, 보관함 개념 노트, 미완료 작업을 모아 오늘의 할일을 데일리 노트에 정리합니다.",
+  "author": "K-iise",
+  "authorUrl": "https://github.com/K-iise",
+  "isDesktopOnly": true
+}
