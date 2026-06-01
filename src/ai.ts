@@ -19,18 +19,22 @@ const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 
 const SYSTEM_PROMPT = [
   "너는 우아한테크코스 수강생의 학습 멘토다.",
-  "현재 미션, 그 미션에서 중요한 CS 주제(이미 노트가 있는 것/없는 것), 그리고 학습자가 옵시디언에 정리해 둔 개념 노트 목록을 받는다.",
-  "이를 바탕으로 '다음에 학습하면 좋을 것' 3가지를 우선순위 순으로 추천한다.",
-  "각 추천은 한 줄 제목 + 왜 지금 이게 중요한지 한 문장. 학습자가 이미 다룬 것은 중복 추천하지 말 것.",
-  "출력은 한국어 마크다운 불릿 목록만. 서론/맺음말/사고과정 없이 최종 추천만 출력한다.",
+  "현재 미션, 그 미션에서 중요한 CS 주제(노트 있음/없음), 내용이 얕아 보강이 필요한 노트, 학습자의 개념 노트 목록, 그리고 '참고 링크' 목록을 받는다.",
+  "학습 정도에 맞춰 '다음에 학습하면 좋을 것' 3가지를 우선순위 순으로 추천한다.",
+  "우선순위 기준: (1) 아직 노트가 없는 핵심 주제를 먼저, (2) 노트는 있으나 얕은 주제는 '심화'로, (3) 이미 충분히 정리된 주제는 추천하지 말 것.",
+  "각 추천 형식(한 줄): `- **제목** — 왜 지금 중요한지 한 문장. 📎 [링크제목](URL)`",
+  "링크 규칙: 반드시 아래 '참고 링크' 목록에 주어진 URL만 사용한다. 적절한 링크가 없으면 링크를 생략한다. URL을 절대 새로 지어내지 마라.",
+  "출력은 한국어 마크다운 불릿 3줄만. 서론/맺음말/사고과정 없이 최종 추천만.",
 ].join("\n");
 
 export interface AiContext {
   missionLabel: string;
   uncoveredTitles: string[];
   coveredTitles: string[];
+  thinNoteTitles: string[];
   noteTitles: string[];
   recentKeywords: string[];
+  topicLinks: { title: string; urls: string[] }[];
 }
 
 export function buildAiContext(
@@ -38,12 +42,18 @@ export function buildAiContext(
   notes: ConceptNote[],
   recentKeywords: string[]
 ): AiContext {
+  const topicLinks = (gap.mission?.topics ?? []).map((t) => ({
+    title: t.title,
+    urls: (t.sites && t.sites.length ? t.sites : t.refs).map((r) => r.url),
+  }));
   return {
     missionLabel: gap.mission?.label ?? "(미설정)",
     uncoveredTitles: gap.uncovered.map((t) => t.title),
     coveredTitles: gap.covered.map((t) => t.title),
+    thinNoteTitles: gap.thin.map((n) => n.title).slice(0, 10),
     noteTitles: notes.map((n) => n.title).slice(0, 100),
     recentKeywords,
+    topicLinks,
   };
 }
 
@@ -53,12 +63,22 @@ function userContent(ctx: AiContext): string {
   lines.push("");
   lines.push(`아직 노트가 없는 CS 주제: ${listOrNone(ctx.uncoveredTitles)}`);
   lines.push(`이미 노트가 있는 CS 주제: ${listOrNone(ctx.coveredTitles)}`);
+  lines.push(`내용이 얕아 보강(심화)이 필요한 노트: ${listOrNone(ctx.thinNoteTitles)}`);
   if (ctx.recentKeywords.length) {
     lines.push(`최근 학습로그 키워드: ${ctx.recentKeywords.join(", ")}`);
   }
   lines.push("");
   lines.push("내 개념 노트 제목 목록:");
   lines.push(listOrNone(ctx.noteTitles));
+  lines.push("");
+  lines.push("참고 링크 (이 URL들만 사용 가능):");
+  if (ctx.topicLinks.length) {
+    for (const t of ctx.topicLinks) {
+      if (t.urls.length) lines.push(`- ${t.title}: ${t.urls.join(" , ")}`);
+    }
+  } else {
+    lines.push("(없음)");
+  }
   return lines.join("\n");
 }
 
@@ -161,7 +181,16 @@ export function recommendViaCli(
           reject(new Error(hint));
           return;
         }
-        resolve((stdout || "").trim() || "(추천 내용을 받지 못했습니다.)");
+        const out = (stdout || "").trim();
+        if (/not logged in|please run \/login|invalid api key/i.test(out)) {
+          reject(
+            new Error(
+              "claude CLI가 로그인되어 있지 않습니다. 터미널에서 `claude` 실행 후 로그인(/login)하거나, 백엔드를 'API 키'로 바꾸세요."
+            )
+          );
+          return;
+        }
+        resolve(out || "(추천 내용을 받지 못했습니다.)");
       }
     );
   });
