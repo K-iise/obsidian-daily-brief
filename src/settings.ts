@@ -14,11 +14,6 @@ export interface DailyBriefSettings {
   dailyNoteDateFormat: string; // YYYY-MM-DD 등
   sectionHeading: string; // 데일리 노트 안에 삽입될 헤딩 (자동 갱신 대상)
 
-  // 보관함 todo 스캔
-  scanVaultTodos: boolean;
-  scanFolders: string; // 콤마 구분, 빈값이면 전체
-  maxVaultTodos: number;
-
   // CS 학습
   csEnabled: boolean;
   currentMission: string; // cs-knowledge MISSIONS의 id
@@ -51,10 +46,6 @@ export const DEFAULT_SETTINGS: DailyBriefSettings = {
   dailyNoteFolder: "",
   dailyNoteDateFormat: "YYYY-MM-DD",
   sectionHeading: "오늘 할일",
-
-  scanVaultTodos: true,
-  scanFolders: "",
-  maxVaultTodos: 10,
 
   csEnabled: true,
   currentMission: "room-escape-reservation",
@@ -302,43 +293,6 @@ export class DailyBriefSettingTab extends PluginSettingTab {
           .onChange(async (v) => {
             const n = parseInt(v, 10);
             this.plugin.settings.thinNoteBytes = isNaN(n) ? 400 : n;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    // --- 보관함 ---
-    containerEl.createEl("h3", { text: "보관함 todo 스캔" });
-
-    new Setting(containerEl)
-      .setName("보관함 내 미완료 작업 스캔")
-      .addToggle((t) =>
-        t.setValue(this.plugin.settings.scanVaultTodos).onChange(async (v) => {
-          this.plugin.settings.scanVaultTodos = v;
-          await this.plugin.saveSettings();
-        })
-      );
-
-    new Setting(containerEl)
-      .setName("스캔 대상 폴더")
-      .setDesc("콤마로 구분. 비우면 보관함 전체.")
-      .addText((t) =>
-        t
-          .setPlaceholder("Projects, Notes")
-          .setValue(this.plugin.settings.scanFolders)
-          .onChange(async (v) => {
-            this.plugin.settings.scanFolders = v;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("최대 표시 개수")
-      .addText((t) =>
-        t
-          .setValue(String(this.plugin.settings.maxVaultTodos))
-          .onChange(async (v) => {
-            const n = parseInt(v, 10);
-            this.plugin.settings.maxVaultTodos = isNaN(n) ? 10 : n;
             await this.plugin.saveSettings();
           })
       );

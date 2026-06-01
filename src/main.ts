@@ -11,7 +11,6 @@ import {
   DEFAULT_SETTINGS,
 } from "./settings";
 import { GitHubSource } from "./sources/github";
-import { VaultTodoSource } from "./sources/vault";
 import { CsSource } from "./sources/cs";
 import { GitHubNotesSource } from "./sources/githubNotes";
 import { ConceptSource } from "./sources/concept";
@@ -152,7 +151,6 @@ export default class DailyBriefPlugin extends Plugin {
         new GitHubNotesSource(this.settings),
         new CsSource(this.settings),
         new ConceptSource(this.app, this.settings, file.path),
-        new VaultTodoSource(this.app, this.settings, file.path),
       ];
 
       const sections: BriefSection[] = [];
