@@ -39,6 +39,15 @@ export class CalendarSource implements BriefSource {
       return section;
     }
 
+    // ICS 형식 검증 — embed URL 등 HTML을 넣으면 여기서 걸러 친절히 안내
+    if (!text.includes("BEGIN:VCALENDAR")) {
+      section.items.push({
+        text:
+          "⚠️ ICS 형식이 아닙니다. embed URL이 아니라 'iCal 형식의 주소'(.../ical/.../basic.ics)를 넣어야 합니다.",
+      });
+      return section;
+    }
+
     const now = new Date();
     const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
