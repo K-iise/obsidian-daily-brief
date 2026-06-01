@@ -10,6 +10,7 @@ import {
   DailyBriefSettingTab,
   DEFAULT_SETTINGS,
 } from "./settings";
+import { CalendarSource } from "./sources/calendar";
 import { GitHubSource } from "./sources/github";
 import { CsSource } from "./sources/cs";
 import { GitHubNotesSource } from "./sources/githubNotes";
@@ -147,6 +148,7 @@ export default class DailyBriefPlugin extends Plugin {
       const file = await this.getOrCreateTodayNote();
 
       const sources = [
+        new CalendarSource(this.settings),
         new GitHubSource(this.settings),
         new GitHubNotesSource(this.settings),
         new CsSource(this.settings),

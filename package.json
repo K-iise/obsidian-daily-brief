@@ -15,5 +15,8 @@
     "obsidian": "^1.4.11",
     "tslib": "^2.6.2",
     "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "ical.js": "^2.2.1"
   }
 }

@@ -14,6 +14,11 @@ export interface DailyBriefSettings {
   dailyNoteDateFormat: string; // YYYY-MM-DD 등
   sectionHeading: string; // 데일리 노트 안에 삽입될 헤딩 (자동 갱신 대상)
 
+  // 캘린더 (비밀 ICS URL)
+  calendarEnabled: boolean;
+  calendarIcsUrl: string;
+  calendarMaxEvents: number;
+
   // CS 학습
   csEnabled: boolean;
   currentMission: string; // cs-knowledge MISSIONS의 id
@@ -46,6 +51,10 @@ export const DEFAULT_SETTINGS: DailyBriefSettings = {
   dailyNoteFolder: "",
   dailyNoteDateFormat: "YYYY-MM-DD",
   sectionHeading: "오늘 할일",
+
+  calendarEnabled: false,
+  calendarIcsUrl: "",
+  calendarMaxEvents: 15,
 
   csEnabled: true,
   currentMission: "room-escape-reservation",
@@ -172,6 +181,45 @@ export class DailyBriefSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           });
       });
+
+    // --- 캘린더 ---
+    containerEl.createEl("h3", { text: "캘린더 (오늘 일정)" });
+
+    new Setting(containerEl)
+      .setName("캘린더 사용")
+      .addToggle((t) =>
+        t.setValue(this.plugin.settings.calendarEnabled).onChange(async (v) => {
+          this.plugin.settings.calendarEnabled = v;
+          await this.plugin.saveSettings();
+        })
+      );
+
+    new Setting(containerEl)
+      .setName("비밀 ICS URL")
+      .setDesc(
+        "Google Calendar → 설정 → 해당 캘린더 → '캘린더 통합' → 'iCal 형식의 비공개 주소'. 읽기 전용입니다."
+      )
+      .addText((t) => {
+        t.inputEl.type = "password";
+        t.setPlaceholder("https://calendar.google.com/calendar/ical/.../basic.ics")
+          .setValue(this.plugin.settings.calendarIcsUrl)
+          .onChange(async (v) => {
+            this.plugin.settings.calendarIcsUrl = v.trim();
+            await this.plugin.saveSettings();
+          });
+      });
+
+    new Setting(containerEl)
+      .setName("최대 표시 개수")
+      .addText((t) =>
+        t
+          .setValue(String(this.plugin.settings.calendarMaxEvents))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            this.plugin.settings.calendarMaxEvents = isNaN(n) ? 15 : n;
+            await this.plugin.saveSettings();
+          })
+      );
 
     // --- CS 학습 ---
     containerEl.createEl("h3", { text: "CS 학습" });
