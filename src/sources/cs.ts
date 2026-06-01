@@ -52,7 +52,12 @@ export class CsSource implements BriefSource {
 }
 
 function refLinks(t: CsTopic): string {
-  return t.refs.map((r) => `[${r.label}](${r.url})`).join(" · ");
+  // 공신력 있는 외부 문서(sites)를 먼저, 그다음 큐레이션 레포(refs). 최대 3개.
+  const all = [...(t.sites ?? []), ...t.refs];
+  return all
+    .slice(0, 3)
+    .map((r) => `[${r.label}](${r.url})`)
+    .join(" · ");
 }
 
 function dayOfYear(d: Date): number {
