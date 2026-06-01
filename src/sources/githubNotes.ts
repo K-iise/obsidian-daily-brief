@@ -68,16 +68,21 @@ export class GitHubNotesSource implements BriefSource {
         /* skip */
       }
     }
-    if (total > 0) {
-      const pct = Math.round((done / total) * 100);
-      items.push({
-        text: `📋 기능 요구사항: **${done}/${total} (${pct}%)** 완료`,
-        priority: 0,
-        key: "ghnotes:progress",
-      });
-      for (const r of remaining) {
-        items.push({ text: `[ ] ${r}`, priority: 1, key: `ghnotes:todo:${r}` });
-      }
+    // 진행 중인 미션일 때만 이 섹션을 보여준다.
+    // (미완료 요구사항이 남아있어야 '진행 중' — 100% 완료/요구사항 없음이면 섹션 숨김)
+    const inProgress = total > 0 && done < total;
+    if (!inProgress) {
+      return { ...section, items: [], emptyText: undefined };
+    }
+
+    const pct = Math.round((done / total) * 100);
+    items.push({
+      text: `📋 기능 요구사항: **${done}/${total} (${pct}%)** 완료`,
+      priority: 0,
+      key: "ghnotes:progress",
+    });
+    for (const r of remaining) {
+      items.push({ text: `[ ] ${r}`, priority: 1, key: `ghnotes:todo:${r}` });
     }
 
     // 2) 최근 학습 로그 — 최신 3개 링크
