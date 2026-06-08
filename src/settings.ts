@@ -34,6 +34,7 @@ export interface DailyBriefSettings {
   conceptTag: string; // 비우면 태그 필터 없음 ('#' 제외)
   thinNoteBytes: number; // 이보다 작으면 '얇은 노트'
   reviewTag: string; // 복습 태그 ('#' 제외)
+  csQuestionsPerDay: number; // 하루에 던질 CS 질문 개수
 
   // AI 추천
   aiBackend: "cli" | "api"; // cli=구독(claude CLI), api=API 키
@@ -68,6 +69,7 @@ export const DEFAULT_SETTINGS: DailyBriefSettings = {
   conceptTag: "",
   thinNoteBytes: 400,
   reviewTag: "복습",
+  csQuestionsPerDay: 2,
 
   aiBackend: "cli",
   claudeCliPath: "claude",
@@ -341,6 +343,19 @@ export class DailyBriefSettingTab extends PluginSettingTab {
           .onChange(async (v) => {
             const n = parseInt(v, 10);
             this.plugin.settings.thinNoteBytes = isNaN(n) ? 400 : n;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("하루 CS 질문 개수")
+      .setDesc("매일 회전하며 던질 질문 수 (아직 노트 없는 주제 우선).")
+      .addText((t) =>
+        t
+          .setValue(String(this.plugin.settings.csQuestionsPerDay))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            this.plugin.settings.csQuestionsPerDay = isNaN(n) || n < 1 ? 2 : n;
             await this.plugin.saveSettings();
           })
       );

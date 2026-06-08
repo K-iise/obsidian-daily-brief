@@ -23,6 +23,10 @@ export interface CsTopic {
   keywords?: string[];
   /** 공신력 있는 외부 레퍼런스 사이트 (MDN, 공식 문서 등) — 추천 시 링크로 노출 */
   sites?: CsRef[];
+  /** 인터뷰식 질문 — 매일 회전하며 하나씩 던진다 */
+  questions?: string[];
+  /** 질문을 풀 때 방향을 잡아줄 한 줄 힌트 */
+  hint?: string;
 }
 
 export interface Mission {
@@ -95,6 +99,12 @@ const roomEscape: Mission = {
           url: "https://en.wikipedia.org/wiki/Optimistic_concurrency_control",
         },
       ],
+      questions: [
+        "낙관적 락과 비관적 락의 차이는? 방탈출 중복 예약 방지엔 어느 쪽이 적합할까?",
+        "DB 유니크 제약만으로 중복 예약을 막을 수 있을까? 한계와 보완책은?",
+        "동시에 같은 시간대 예약 요청이 들어오면 무슨 일이 생기고, 어떻게 직렬화할까?",
+      ],
+      hint: "충돌 빈도·재시도 비용·유니크 제약과의 조합을 기준으로 비교해보세요.",
     },
     {
       id: "transaction-acid",
@@ -111,6 +121,12 @@ const roomEscape: Mission = {
           url: "https://en.wikipedia.org/wiki/Isolation_%28database_systems%29",
         },
       ],
+      questions: [
+        "@Transactional의 전파(propagation) 옵션은 왜 필요한가? REQUIRES_NEW는 언제 쓰나?",
+        "READ COMMITTED와 REPEATABLE READ에서 예약 조회→생성 사이 어떤 이상 현상이 생길 수 있나?",
+        "트랜잭션이 롤백되는 조건은? 체크 예외/언체크 예외에서 기본 동작 차이는?",
+      ],
+      hint: "격리 수준별로 막아주는 현상(dirty/non-repeatable/phantom read)을 표로 정리해보세요.",
     },
     {
       id: "http-methods-status",
@@ -131,6 +147,12 @@ const roomEscape: Mission = {
           url: "https://developer.mozilla.org/ko/docs/Web/HTTP/Status",
         },
       ],
+      questions: [
+        "예약 생성에 POST와 PUT 중 무엇이 맞을까? 멱등성 관점에서 설명해보라.",
+        "예약 성공/중복/검증실패에 각각 어떤 상태 코드(201/409/400/...)를 줄까?",
+        "GET/DELETE는 멱등한데 POST는 왜 아닐까? 재시도 시 무슨 문제가 생기나?",
+      ],
+      hint: "메서드별 멱등성 정의부터 시작해, 같은 요청을 두 번 보냈을 때를 그려보세요.",
     },
     {
       id: "rest-api-design",
@@ -143,6 +165,12 @@ const roomEscape: Mission = {
       sites: [
         { label: "REST API Tutorial", url: "https://restfulapi.net/" },
       ],
+      questions: [
+        "예약/테마/시간을 자원으로 본 URI를 설계해보라. URI에 동사가 들어가면 왜 안 좋을까?",
+        "관리자용 API와 사용자용 API를 분리해야 하는 기준은 무엇일까?",
+        "REST에서 '상태 없음(stateless)'은 무슨 의미이고 왜 중요한가?",
+      ],
+      hint: "자원(명사) 중심 URI + 행위는 HTTP 메서드로. 내 컨트롤러 URI를 점검해보세요.",
     },
     {
       id: "auth-cookie-session-jwt",
@@ -159,6 +187,12 @@ const roomEscape: Mission = {
           url: "https://developer.mozilla.org/ko/docs/Web/HTTP/Cookies",
         },
       ],
+      questions: [
+        "세션 기반 인증과 JWT의 서버 상태(stateful vs stateless) 차이는? 각 장단점은?",
+        "쿠키에 무엇을 담고 어디서 검증해야 안전할까? HttpOnly/Secure는 왜 쓰나?",
+        "JWT가 탈취되면? 만료/무효화(블랙리스트)는 어떻게 다루나?",
+      ],
+      hint: "stateless 여부와 토큰 탈취·만료 처리 방식을 기준으로 비교하세요.",
     },
     {
       id: "layered-architecture",
@@ -174,6 +208,11 @@ const roomEscape: Mission = {
           url: "https://en.wikipedia.org/wiki/Multitier_architecture",
         },
       ],
+      questions: [
+        "Controller/Service/Repository 각 계층의 책임은? 비즈니스 로직이 컨트롤러에 있으면 왜 문제인가?",
+        "DTO와 도메인 객체를 분리하는 이유는? 어디서 변환해야 할까?",
+      ],
+      hint: "테스트 용이성과 관심사 분리 관점에서 한 클래스를 직접 점검해보세요.",
     },
     {
       id: "db-index-normalization",
@@ -186,6 +225,12 @@ const roomEscape: Mission = {
       sites: [
         { label: "Use The Index, Luke!", url: "https://use-the-index-luke.com/" },
       ],
+      questions: [
+        "예약 조회(테마·날짜 기준)에 맞는 복합 인덱스를 설계해보라. 컬럼 순서는 왜 중요한가?",
+        "인덱스를 걸면 항상 빨라질까? 쓰기 성능·카디널리티 측면의 트레이드오프는?",
+        "정규화와 반정규화는 각각 언제 선택하나?",
+      ],
+      hint: "WHERE/ORDER BY에 쓰는 컬럼과 카디널리티를 기준으로 인덱스를 잡아보세요.",
     },
   ],
 };
