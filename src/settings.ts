@@ -36,6 +36,10 @@ export interface DailyBriefSettings {
   reviewTag: string; // 복습 태그 ('#' 제외)
   csQuestionsPerDay: number; // 하루에 던질 CS 질문 개수
 
+  // CS 기초 (coding-interview-university)
+  csFundamentalsEnabled: boolean;
+  csFundamentalsPerDay: number;
+
   // AI 추천
   aiBackend: "cli" | "api"; // cli=구독(claude CLI), api=API 키
   claudeCliPath: string; // claude 실행 파일 경로
@@ -70,6 +74,9 @@ export const DEFAULT_SETTINGS: DailyBriefSettings = {
   thinNoteBytes: 400,
   reviewTag: "복습",
   csQuestionsPerDay: 2,
+
+  csFundamentalsEnabled: true,
+  csFundamentalsPerDay: 1,
 
   aiBackend: "cli",
   claudeCliPath: "claude",
@@ -356,6 +363,31 @@ export class DailyBriefSettingTab extends PluginSettingTab {
           .onChange(async (v) => {
             const n = parseInt(v, 10);
             this.plugin.settings.csQuestionsPerDay = isNaN(n) || n < 1 ? 2 : n;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    // --- CS 기초 ---
+    containerEl.createEl("h3", { text: "CS 기초 (coding-interview-university)" });
+
+    new Setting(containerEl)
+      .setName("CS 기초 질문 사용")
+      .setDesc("미션과 무관한 CS 기본기(자료구조·알고리즘·OS·네트워크) 질문을 매일 회전.")
+      .addToggle((t) =>
+        t.setValue(this.plugin.settings.csFundamentalsEnabled).onChange(async (v) => {
+          this.plugin.settings.csFundamentalsEnabled = v;
+          await this.plugin.saveSettings();
+        })
+      );
+
+    new Setting(containerEl)
+      .setName("하루 기초 질문 개수")
+      .addText((t) =>
+        t
+          .setValue(String(this.plugin.settings.csFundamentalsPerDay))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            this.plugin.settings.csFundamentalsPerDay = isNaN(n) || n < 1 ? 1 : n;
             await this.plugin.saveSettings();
           })
       );

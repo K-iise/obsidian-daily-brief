@@ -15,6 +15,7 @@ import { GitHubSource } from "./sources/github";
 import { CsSource } from "./sources/cs";
 import { GitHubNotesSource } from "./sources/githubNotes";
 import { ConceptSource } from "./sources/concept";
+import { FundamentalsSource } from "./sources/fundamentals";
 import {
   formatDateForFilename,
   renderSections,
@@ -153,6 +154,7 @@ export default class DailyBriefPlugin extends Plugin {
         new GitHubNotesSource(this.settings),
         new CsSource(this.settings),
         new ConceptSource(this.app, this.settings, file.path),
+        new FundamentalsSource(this.settings),
       ];
 
       const sections: BriefSection[] = [];
