@@ -121,7 +121,7 @@ function buildNote(topic: BackendTopic, md: string, checks: string[]): string {
     "",
     `> [!quote] 출처: [${GYOOGLE_REPO}](${origin}) (MIT License) — 학습용으로 가져온 자료입니다.`,
     "",
-    fixRelativeImages(md, topic.path),
+    fixRelativeImages(cleanMarkdown(md), topic.path),
     "",
     "---",
     "",
@@ -157,6 +157,67 @@ function extractChecks(md: string): string[] {
   return out.length > 0
     ? out
     : ["핵심 개념", "장단점과 사용 시점", "면접 꼬리질문 1개에 대한 답"];
+}
+
+/**
+ * gyoogle 원문을 옵시디언에서 읽기 좋게 정리.
+ *  - <br> 태그 제거 (블록마다 박혀 있어 빈 줄이 과도해짐)
+ *  - 첫 H1 제목 제거 (노트 파일명과 중복)
+ *  - 헤딩 승격: 가장 얕은 헤딩이 ##가 되도록 (####만 쓰는 파일이 너무 작게 렌더되는 문제)
+ *  - 연속 빈 줄 3개+ → 1개
+ * 코드펜스(```) 안은 건드리지 않는다.
+ */
+function cleanMarkdown(md: string): string {
+  const raw = md.split("\n").map((l) => l.replace(/<br\s*\/?>/gi, "").trimEnd());
+
+  // 1) 최소 헤딩 레벨 계산 (첫 H1 제목 제외, 코드펜스 밖)
+  let inCode = false;
+  let titleSeen = false;
+  const levels: number[] = [];
+  for (const l of raw) {
+    if (/^\s*```/.test(l)) {
+      inCode = !inCode;
+      continue;
+    }
+    if (inCode) continue;
+    const m = l.match(/^(#{1,6})\s+/);
+    if (!m) continue;
+    if (!titleSeen && m[1].length === 1) {
+      titleSeen = true;
+      continue;
+    }
+    levels.push(m[1].length);
+  }
+  const shift = levels.length ? Math.max(0, Math.min(...levels) - 2) : 0;
+
+  // 2) 재구성 (제목 제거 + 헤딩 승격)
+  inCode = false;
+  titleSeen = false;
+  const out: string[] = [];
+  for (const l of raw) {
+    if (/^\s*```/.test(l)) {
+      inCode = !inCode;
+      out.push(l);
+      continue;
+    }
+    if (!inCode) {
+      const hm = l.match(/^(#{1,6})(\s+.*)$/);
+      if (hm) {
+        if (!titleSeen && hm[1].length === 1) {
+          titleSeen = true; // 첫 H1 제목 → 제거
+          continue;
+        }
+        if (shift > 0) {
+          const lvl = Math.max(2, hm[1].length - shift);
+          out.push("#".repeat(lvl) + hm[2]);
+          continue;
+        }
+      }
+    }
+    out.push(l);
+  }
+
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
 /** 상대경로 이미지(md/img 태그)를 raw 절대경로로 보정 */
