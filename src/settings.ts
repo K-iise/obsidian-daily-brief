@@ -36,13 +36,10 @@ export interface DailyBriefSettings {
   reviewTag: string; // 복습 태그 ('#' 제외)
   csQuestionsPerDay: number; // 하루에 던질 CS 질문 개수
 
-  // CS 기초 (coding-interview-university)
-  csFundamentalsEnabled: boolean;
-  csFundamentalsPerDay: number;
-
-  // 백엔드 CS (gyoogle/tech-interview-for-developer)
-  csBackendEnabled: boolean;
-  csBackendPerDay: number;
+  // 오늘의 CS 개념 (gyoogle 원문 → 보관함 노트 생성)
+  gyoogleEnabled: boolean;
+  gyoogleFolder: string; // 개념 노트 저장 폴더
+  gyooglePerDay: number;
 
   // AI 추천
   aiBackend: "cli" | "api"; // cli=구독(claude CLI), api=API 키
@@ -79,11 +76,9 @@ export const DEFAULT_SETTINGS: DailyBriefSettings = {
   reviewTag: "복습",
   csQuestionsPerDay: 2,
 
-  csFundamentalsEnabled: true,
-  csFundamentalsPerDay: 1,
-
-  csBackendEnabled: true,
-  csBackendPerDay: 1,
+  gyoogleEnabled: true,
+  gyoogleFolder: "CS 개념",
+  gyooglePerDay: 1,
 
   aiBackend: "cli",
   claudeCliPath: "claude",
@@ -374,52 +369,42 @@ export class DailyBriefSettingTab extends PluginSettingTab {
           })
       );
 
-    // --- CS 기초 ---
-    containerEl.createEl("h3", { text: "CS 기초 (coding-interview-university)" });
+    // --- 오늘의 CS 개념 ---
+    containerEl.createEl("h3", { text: "오늘의 CS 개념 (gyoogle)" });
 
     new Setting(containerEl)
-      .setName("CS 기초 질문 사용")
-      .setDesc("미션과 무관한 CS 기본기(자료구조·알고리즘·OS·네트워크) 질문을 매일 회전.")
+      .setName("CS 개념 노트 사용")
+      .setDesc(
+        "gyoogle/tech-interview-for-developer(MIT)의 백엔드 주제를 매일 하나씩 가져와 보관함에 개념 노트로 만들고, 확인 질문을 답니다."
+      )
       .addToggle((t) =>
-        t.setValue(this.plugin.settings.csFundamentalsEnabled).onChange(async (v) => {
-          this.plugin.settings.csFundamentalsEnabled = v;
+        t.setValue(this.plugin.settings.gyoogleEnabled).onChange(async (v) => {
+          this.plugin.settings.gyoogleEnabled = v;
           await this.plugin.saveSettings();
         })
       );
 
     new Setting(containerEl)
-      .setName("하루 기초 질문 개수")
+      .setName("개념 노트 폴더")
+      .setDesc("가져온 자료가 저장될 폴더. 이미 있는 노트는 덮어쓰지 않습니다.")
       .addText((t) =>
         t
-          .setValue(String(this.plugin.settings.csFundamentalsPerDay))
+          .setPlaceholder("CS 개념")
+          .setValue(this.plugin.settings.gyoogleFolder)
           .onChange(async (v) => {
-            const n = parseInt(v, 10);
-            this.plugin.settings.csFundamentalsPerDay = isNaN(n) || n < 1 ? 1 : n;
+            this.plugin.settings.gyoogleFolder = v.trim() || "CS 개념";
             await this.plugin.saveSettings();
           })
       );
 
-    // --- 백엔드 CS ---
-    containerEl.createEl("h3", { text: "백엔드 CS (gyoogle)" });
-
     new Setting(containerEl)
-      .setName("백엔드 CS 지식 사용")
-      .setDesc("gyoogle/tech-interview-for-developer의 백엔드 주제를 매일 하나씩 회전.")
-      .addToggle((t) =>
-        t.setValue(this.plugin.settings.csBackendEnabled).onChange(async (v) => {
-          this.plugin.settings.csBackendEnabled = v;
-          await this.plugin.saveSettings();
-        })
-      );
-
-    new Setting(containerEl)
-      .setName("하루 백엔드 주제 개수")
+      .setName("하루 개념 개수")
       .addText((t) =>
         t
-          .setValue(String(this.plugin.settings.csBackendPerDay))
+          .setValue(String(this.plugin.settings.gyooglePerDay))
           .onChange(async (v) => {
             const n = parseInt(v, 10);
-            this.plugin.settings.csBackendPerDay = isNaN(n) || n < 1 ? 1 : n;
+            this.plugin.settings.gyooglePerDay = isNaN(n) || n < 1 ? 1 : n;
             await this.plugin.saveSettings();
           })
       );

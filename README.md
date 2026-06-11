@@ -15,8 +15,7 @@ GitHub, 내 학습 노트(인덱스 레포), 보관함 개념 노트, 미완료 
 | 🗂️ 내 미션 노트 | 미션 README 요구사항 진행률 · 최근 study-log 링크 | 인덱스 레포 |
 | 🎓 CS 학습 | 현재 미션의 "오늘의 CS 주제"(날짜 로테이션) + 참고 레포 | 내장 큐레이션 |
 | 📚 오늘의 CS 질문 | 갭 분석으로 아직 노트 없는 주제를 골라, 매일 회전하며 인터뷰식 질문 + 힌트 + 참고 링크 제시 | 보관함 |
-| 🧠 CS 기초 | coding-interview-university 기반 CS 기본기(자료구조·알고리즘·OS·네트워크) 질문, 매일 회전 | 내장 |
-| 🧩 백엔드 CS | gyoogle/tech-interview-for-developer의 백엔드 주제(DB·네트워크·OS·Java·Spring·디자인패턴 등)를 매일 하나씩, 원문 링크 첨부 | 내장 |
+| 📖 오늘의 CS 개념 | gyoogle/tech-interview-for-developer(MIT)의 백엔드 주제를 매일 하나씩 가져와 **보관함에 개념 노트 자동 생성** + 확인 질문 체크박스 | gyoogle 원문 |
 | 🤖 AI 학습 추천 | 위 정보를 바탕으로 LLM이 "다음에 뭘 공부할지" 추천 (명령으로 호출) | Claude |
 
 ## 명령어
@@ -70,8 +69,7 @@ npm run build      # 타입체크 + 프로덕션 번들
 - **GitHub**: 사용자명 · PAT · 내 PR 활동 기간(일)
 - **내 미션 노트**: 인덱스 레포(`owner/repo`) · 브랜치
 - **CS 학습**: 현재 미션 선택
-- **CS 기초**: coding-interview-university 기반 질문 on/off · 하루 개수
-- **백엔드 CS**: gyoogle 기반 백엔드 주제 on/off · 하루 개수
+- **오늘의 CS 개념**: gyoogle 원문 노트 생성 on/off · 저장 폴더 · 하루 개수
 - **개념노트 갭 분석**: 개념 폴더/태그(비우면 전체 스캔) · 복습 태그 · 얇은 노트 기준
 - **AI**: 백엔드(구독 CLI / API 키) · CLI 경로 · API 키 · 모델
 
