@@ -40,6 +40,10 @@ export interface DailyBriefSettings {
   csFundamentalsEnabled: boolean;
   csFundamentalsPerDay: number;
 
+  // 백엔드 CS (gyoogle/tech-interview-for-developer)
+  csBackendEnabled: boolean;
+  csBackendPerDay: number;
+
   // AI 추천
   aiBackend: "cli" | "api"; // cli=구독(claude CLI), api=API 키
   claudeCliPath: string; // claude 실행 파일 경로
@@ -77,6 +81,9 @@ export const DEFAULT_SETTINGS: DailyBriefSettings = {
 
   csFundamentalsEnabled: true,
   csFundamentalsPerDay: 1,
+
+  csBackendEnabled: true,
+  csBackendPerDay: 1,
 
   aiBackend: "cli",
   claudeCliPath: "claude",
@@ -388,6 +395,31 @@ export class DailyBriefSettingTab extends PluginSettingTab {
           .onChange(async (v) => {
             const n = parseInt(v, 10);
             this.plugin.settings.csFundamentalsPerDay = isNaN(n) || n < 1 ? 1 : n;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    // --- 백엔드 CS ---
+    containerEl.createEl("h3", { text: "백엔드 CS (gyoogle)" });
+
+    new Setting(containerEl)
+      .setName("백엔드 CS 지식 사용")
+      .setDesc("gyoogle/tech-interview-for-developer의 백엔드 주제를 매일 하나씩 회전.")
+      .addToggle((t) =>
+        t.setValue(this.plugin.settings.csBackendEnabled).onChange(async (v) => {
+          this.plugin.settings.csBackendEnabled = v;
+          await this.plugin.saveSettings();
+        })
+      );
+
+    new Setting(containerEl)
+      .setName("하루 백엔드 주제 개수")
+      .addText((t) =>
+        t
+          .setValue(String(this.plugin.settings.csBackendPerDay))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            this.plugin.settings.csBackendPerDay = isNaN(n) || n < 1 ? 1 : n;
             await this.plugin.saveSettings();
           })
       );
