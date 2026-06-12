@@ -88,16 +88,23 @@ export class ConceptNoteSource implements BriefSource {
     md: string,
     checks: string[]
   ): Promise<TFile> {
-    const folder = normalizePath(this.settings.gyoogleFolder || "CS 개념");
-    if (!this.app.vault.getAbstractFileByPath(folder)) {
-      await this.app.vault.createFolder(folder);
-    }
+    const base = normalizePath(this.settings.gyoogleFolder || "CS 개념");
+    // 카테고리별 하위 폴더로 분리 저장 (예: CS 개념/데이터베이스/Transaction.md)
+    const folder = normalizePath(`${base}/${sanitizeName(topic.category)}`);
+    await this.ensureFolder(base);
+    await this.ensureFolder(folder);
 
     const path = normalizePath(`${folder}/${sanitizeName(topic.title)}.md`);
     const existing = this.app.vault.getAbstractFileByPath(path);
     if (existing instanceof TFile) return existing;
 
     return await this.app.vault.create(path, buildNote(topic, md, checks));
+  }
+
+  private async ensureFolder(path: string): Promise<void> {
+    if (!this.app.vault.getAbstractFileByPath(path)) {
+      await this.app.vault.createFolder(path);
+    }
   }
 }
 
