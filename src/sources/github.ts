@@ -18,7 +18,7 @@ export class GitHubSource implements BriefSource {
       title: "GitHub",
       emoji: "💻",
       items: [],
-      emptyText: "검토할 PR/이슈가 없습니다.",
+      emptyText: "",
     };
 
     const { githubEnabled, githubToken, githubUsername } = this.settings;

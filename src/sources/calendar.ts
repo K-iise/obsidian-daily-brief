@@ -16,7 +16,7 @@ export class CalendarSource implements BriefSource {
       title: "오늘 일정",
       emoji: "📅",
       items: [],
-      emptyText: "오늘 일정이 없습니다.",
+      emptyText: "",
     };
 
     if (!this.settings.calendarEnabled || !this.settings.calendarIcsUrl) {
@@ -58,6 +58,19 @@ export class CalendarSource implements BriefSource {
     } catch (e) {
       section.items.push({ text: `⚠️ 캘린더 파싱 실패: ${(e as Error).message}` });
       return section;
+    }
+
+    // 트랙 필터: "BE | 제목" 접두사가 지정 트랙이 아니면 제외. 접두사 없는 일정은 항상 표시.
+    const tracks = this.settings.calendarTracks
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    if (tracks.length > 0) {
+      occs = occs.filter((o) => {
+        const m = o.summary.match(/^\s*([^\s|]+)\s*\|/);
+        if (!m) return true; // 접두사 없음 → 항상 표시
+        return tracks.includes(m[1].toLowerCase());
+      });
     }
 
     occs.sort((a, b) => {

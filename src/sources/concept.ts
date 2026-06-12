@@ -22,7 +22,7 @@ export class ConceptSource implements BriefSource {
       title: "오늘의 CS 질문",
       emoji: "📚",
       items: [],
-      emptyText: "질문할 CS 주제가 없습니다.",
+      emptyText: "",
     };
     if (!this.settings.conceptScanEnabled) return { ...section, items: [] };
 

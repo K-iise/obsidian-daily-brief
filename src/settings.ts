@@ -18,6 +18,7 @@ export interface DailyBriefSettings {
   calendarEnabled: boolean;
   calendarIcsUrl: string;
   calendarMaxEvents: number;
+  calendarTracks: string; // 쉼표 구분 트랙 코드(예: "BE"). "TRACK | 제목" 접두사로 필터. 빈값=전체
 
   // CS 학습
   csEnabled: boolean;
@@ -61,6 +62,7 @@ export const DEFAULT_SETTINGS: DailyBriefSettings = {
   calendarEnabled: false,
   calendarIcsUrl: "",
   calendarMaxEvents: 15,
+  calendarTracks: "",
 
   csEnabled: true,
   currentMission: "room-escape-reservation",
@@ -228,6 +230,21 @@ export class DailyBriefSettingTab extends PluginSettingTab {
           .onChange(async (v) => {
             const n = parseInt(v, 10);
             this.plugin.settings.calendarMaxEvents = isNaN(n) ? 15 : n;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("트랙 필터")
+      .setDesc(
+        "쉼표로 트랙 코드 입력(예: BE). 'BE | 제목'처럼 접두사가 붙은 일정만 필터합니다. 접두사 없는 일정은 항상 표시. 비우면 전체."
+      )
+      .addText((t) =>
+        t
+          .setPlaceholder("BE")
+          .setValue(this.plugin.settings.calendarTracks)
+          .onChange(async (v) => {
+            this.plugin.settings.calendarTracks = v.trim();
             await this.plugin.saveSettings();
           })
       );

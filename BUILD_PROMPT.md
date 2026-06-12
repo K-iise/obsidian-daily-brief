@@ -68,7 +68,7 @@ export interface BriefSource {
 
 데일리 노트의 사용자 본문을 건드리지 않도록, 자동 생성 영역을 HTML 주석 마커로 감싼다.
 
-- `renderSections(sections)`: 섹션→마크다운. `items=[]`이고 `emptyText` 없으면 섹션 생략. items는 `priority` 오름차순(동률은 삽입순 유지)으로 정렬 후 `- ${text}`.
+- `renderSections(sections)`: 섹션→마크다운. **`items=[]`이면 섹션을 통째로 생략** (비활성 토글·내용 없음 모두 숨김 — "없습니다" 플레이스홀더를 만들지 않는다). items는 `priority` 오름차순(동률은 삽입순 유지)으로 정렬 후 `- ${text}`.
 - `upsertSection(existing, heading, body, now)`:
   - 마커 `<!-- daily-brief:begin -->` ~ `<!-- daily-brief:end -->`가 있으면 그 안만 교체.
   - 없으면 `## <heading>` 바로 아래에 삽입. 헤딩도 없으면 문서 끝에 새 섹션 추가.
@@ -84,7 +84,7 @@ export interface BriefSource {
 |---|---|
 | 데일리 노트 | `dailyNoteFolder("")` · `dailyNoteDateFormat("YYYY-MM-DD")` · `sectionHeading("오늘 할일")` |
 | GitHub | `githubEnabled(false)` · `githubToken("")` · `githubUsername("")` · `githubActiveDays(14)` |
-| 캘린더 | `calendarEnabled(false)` · `calendarIcsUrl("")` · `calendarMaxEvents(15)` |
+| 캘린더 | `calendarEnabled(false)` · `calendarIcsUrl("")` · `calendarMaxEvents(15)` · `calendarTracks("")` (쉼표 구분 트랙코드; "BE \| 제목" 접두사 필터, 접두사 없으면 항상 표시) |
 | CS 학습 | `csEnabled(true)` · `currentMission("room-escape-reservation")` |
 | 내 미션 노트 | `ghNotesEnabled(true)` · `notesRepo("")` · `notesBranch("main")` |
 | 개념노트 갭분석 | `conceptScanEnabled(true)` · `conceptFolder("")` · `conceptTag("")` · `thinNoteBytes(400)` · `reviewTag("복습")` · `csQuestionsPerDay(2)` |

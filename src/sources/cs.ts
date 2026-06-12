@@ -15,7 +15,7 @@ export class CsSource implements BriefSource {
       title: "CS 학습",
       emoji: "🎓",
       items: [],
-      emptyText: "미션을 설정하면 CS 추천이 표시됩니다.",
+      emptyText: "",
     };
 
     if (!this.settings.csEnabled) return { ...section, items: [] };

@@ -17,7 +17,7 @@ export class GitHubNotesSource implements BriefSource {
       title: "내 미션 노트",
       emoji: "🗂️",
       items: [],
-      emptyText: "이 미션에 연결된 노트가 없습니다.",
+      emptyText: "",
     };
 
     if (!this.settings.ghNotesEnabled) return { ...section, items: [] };
