@@ -46,27 +46,30 @@ export class ConceptSource implements BriefSource {
       text: reviewing
         ? `_복습 질문 — 핵심 주제 ${gap.covered.length}/${total} 정리 완료_`
         : `_정리해볼 질문 (남은 주제 ${gap.uncovered.length}/${total})_`,
+      plain: true,
       priority: 0,
     });
 
     for (let k = 0; k < n; k++) {
       const topic = pool[(start + k) % pool.length];
       const q = pickQuestion(topic, doy + k);
+      // 질문(불릿) + 힌트/링크/정리체크박스(중첩)
       items.push({
         text: `❓ ${q}`,
         priority: 1 + k,
         key: `cs-q:${topic.id}`,
       });
       if (topic.hint) {
-        items.push({ text: `  ↳ 💡 ${topic.hint}`, priority: 1 + k });
+        items.push({ text: `💡 ${topic.hint}`, indent: 1, priority: 1 + k });
       }
       const links = refLinks(topic);
       if (links) {
-        items.push({ text: `  ↳ 📎 ${links}`, priority: 1 + k });
+        items.push({ text: `📎 ${links}`, indent: 1, priority: 1 + k });
       }
-      // 답 정리용 체크박스 (정리하면 체크)
       items.push({
-        text: `  - [ ] \`${topic.title}\` 노트로 정리하기`,
+        text: `\`${topic.title}\` 노트로 정리하기`,
+        indent: 1,
+        checkbox: true,
         priority: 1 + k,
         key: `cs-q:todo:${topic.id}`,
       });

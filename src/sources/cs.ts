@@ -27,22 +27,21 @@ export class CsSource implements BriefSource {
     const todayIdx = dayOfYear(new Date()) % topics.length;
     const today = topics[todayIdx];
 
-    // 1) 오늘의 주제 — 깊게
+    // 1) 오늘의 주제 — 깊게 (세부는 중첩 불릿)
     section.items.push({
       text: `**오늘의 주제 — ${today.title}**`,
       priority: 0,
       key: `cs:today:${today.id}`,
     });
+    section.items.push({ text: `💡 왜: ${today.why}`, indent: 1, priority: 0 });
     section.items.push({
-      text: `  ↳ _왜:_ ${today.why}`,
+      text: `✅ 오늘 할일: ${today.task}`,
+      indent: 1,
       priority: 0,
     });
     section.items.push({
-      text: `  ↳ _오늘 할일:_ ${today.task}`,
-      priority: 0,
-    });
-    section.items.push({
-      text: `  ↳ _참고:_ ${refLinks(today)}`,
+      text: `📎 참고: ${refLinks(today)}`,
+      indent: 1,
       priority: 0,
     });
 

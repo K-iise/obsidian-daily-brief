@@ -44,17 +44,15 @@ export class ConceptNoteSource implements BriefSource {
         const file = await this.ensureNote(topic, md, checks);
 
         items.push({
-          text: `📖 **[${topic.category}] ${topic.title}** → [[${file.basename}]]`,
+          text: `📖 [${topic.category}] **${topic.title}** → [[${file.basename}]] _(읽고 아래 확인)_`,
           priority: k * 10,
           key: `concept-note:${topic.id}`,
         });
-        items.push({
-          text: `  ↳ 읽고 나서 확인:`,
-          priority: k * 10 + 1,
-        });
         for (const c of checks.slice(0, 3)) {
           items.push({
-            text: `  - [ ] ${c} — 보지 않고 설명할 수 있다`,
+            text: `${c} — 보지 않고 설명할 수 있다`,
+            indent: 1,
+            checkbox: true,
             priority: k * 10 + 2,
           });
         }

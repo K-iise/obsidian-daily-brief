@@ -7,6 +7,12 @@ export interface BriefItem {
   due?: string;
   /** 추적용 — 같은 항목 중복 방지 */
   key?: string;
+  /** 들여쓰기 단계 (0=최상위). 중첩 불릿/체크박스 표현 */
+  indent?: number;
+  /** 체크박스 항목으로 렌더 (- [ ] ...) */
+  checkbox?: boolean;
+  /** 불릿 없는 일반 텍스트(캡션 등) */
+  plain?: boolean;
 }
 
 export interface BriefSection {

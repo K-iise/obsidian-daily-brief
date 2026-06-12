@@ -20,7 +20,14 @@ export function renderSections(sections: BriefSection[]): string {
         (a, b) => (a.priority ?? 9) - (b.priority ?? 9)
       );
       for (const item of sorted) {
-        blocks.push(`- ${item.text}`);
+        const pad = "    ".repeat(Math.max(0, item.indent ?? 0));
+        if (item.plain) {
+          blocks.push(`${pad}${item.text}`);
+        } else if (item.checkbox) {
+          blocks.push(`${pad}- [ ] ${item.text}`);
+        } else {
+          blocks.push(`${pad}- ${item.text}`);
+        }
       }
     }
     blocks.push("");

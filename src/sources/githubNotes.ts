@@ -82,13 +82,19 @@ export class GitHubNotesSource implements BriefSource {
       key: "ghnotes:progress",
     });
     for (const r of remaining) {
-      items.push({ text: `[ ] ${r}`, priority: 1, key: `ghnotes:todo:${r}` });
+      items.push({
+        text: r,
+        checkbox: true,
+        indent: 1,
+        priority: 1,
+        key: `ghnotes:todo:${r}`,
+      });
     }
 
     // 2) 최근 학습 로그 — 최신 3개 링크
     const recent = logs.slice(0, 3);
     if (recent.length > 0) {
-      items.push({ text: `_최근 학습 로그_`, priority: 2 });
+      items.push({ text: `_최근 학습 로그_`, plain: true, priority: 2 });
       for (const p of recent) {
         items.push({
           text: `📓 [${baseName(p)}](${blobUrl(repo, branch, p)})`,
